@@ -65,6 +65,78 @@
   .kb-hint { font-size: 0.68rem; color: #3d4466; margin-top: -10px; margin-bottom: 16px; }
   kbd { background: #1e2235; border: 1px solid #2d3655; border-radius: 4px; padding: 1px 5px; font-size: 0.65rem; color: #6b7280; }
   #loading { color: #6b7280; font-size: 0.9rem; margin-top: 40px; }
+
+  /* ── Tablet: 481px–768px ─────────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    body { padding: 16px 12px; }
+    .card-container { height: 260px; }
+    .card-face { padding: 24px 24px; }
+    .card-front .question { font-size: 0.97rem; }
+    .card-back .answer { font-size: 0.85rem; }
+    .btn { padding: 11px 18px; min-height: 44px; font-size: 0.82rem; }
+    .stats-bar { gap: 14px; }
+  }
+
+  /* ── Phone portrait: ≤480px ─────────────────────────────────────────────── */
+  @media (max-width: 480px) {
+    body { padding: 12px 10px; }
+
+    h1 { font-size: 1.1rem; }
+    .subtitle { font-size: 0.72rem; margin-bottom: 12px; }
+
+    /* Mode bar — shrink buttons, allow wrap */
+    .mode-bar { gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 12px; }
+    .mode-btn { padding: 5px 10px; font-size: 0.7rem; }
+
+    /* Filter chips */
+    .filter-bar { gap: 5px; margin-bottom: 12px; }
+    .filter-btn { padding: 4px 9px; font-size: 0.68rem; }
+
+    /* Stats */
+    .stats-bar { gap: 10px; margin-bottom: 14px; }
+    .stat-num { font-size: 1.1rem; }
+    .stat-label { font-size: 0.65rem; }
+
+    /* Progress bar */
+    .progress-wrap { margin-bottom: 14px; }
+
+    /* Card — taller on phone to fit long answers, but not overflowing */
+    .card-container { height: 300px; margin-bottom: 16px; }
+    .card-face { padding: 20px 16px; }
+    .card-topic-tag { font-size: 0.58rem; padding: 2px 6px; top: 10px; left: 10px; }
+    .card-type-tag  { font-size: 0.58rem; padding: 2px 6px; top: 10px; right: 10px; }
+    .card-num  { font-size: 0.6rem; bottom: 8px; right: 10px; }
+    .card-hint { font-size: 0.58rem; bottom: 8px; left: 10px; }
+    .card-front .question { font-size: 0.93rem; line-height: 1.5; }
+    .card-back .answer { font-size: 0.8rem; line-height: 1.6; }
+
+    /* Buttons — full width row, min touch target 44px */
+    .controls { gap: 8px; margin-bottom: 14px; }
+    .btn { padding: 12px 14px; min-height: 44px; font-size: 0.8rem; }
+    .btn-know, .btn-unsure { flex: 1; max-width: 140px; }
+
+    /* Hide keyboard hint on mobile — irrelevant */
+    .kb-hint { display: none; }
+
+    /* Restart buttons */
+    .btn-restart { font-size: 0.72rem; padding: 9px 12px; min-height: 44px; }
+
+    /* Complete screen */
+    .complete-title { font-size: 1.3rem; }
+    .complete-sub { font-size: 0.82rem; }
+    .score-circle { width: 88px; height: 88px; }
+    .score-pct { font-size: 1.3rem; }
+  }
+
+  /* ── Phone landscape: short viewport ───────────────────────────────────── */
+  @media (max-width: 768px) and (max-height: 500px) {
+    .card-container { height: 200px; }
+    .card-face { padding: 14px 16px; }
+    .stats-bar { margin-bottom: 8px; }
+    .progress-wrap { margin-bottom: 10px; }
+    .controls { margin-bottom: 10px; }
+    .subtitle { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -133,7 +205,6 @@
   <button class="btn btn-unsure" onclick="reviewUnsure()" style="margin-top:4px">Review Unsure Only</button>
 </div>
 
-<!-- Step 1: load config -->
 <script src="config.js"></script>
 <script src="app.js"></script>
 
