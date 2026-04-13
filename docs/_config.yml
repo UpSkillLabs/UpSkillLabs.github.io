@@ -22,11 +22,11 @@ title: AZ900 Flashcards
 # email: UpSkillingStudio@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Bookmark this to keep an eye on my project updates!
-domain: UpSkillingStudio.github.io
-url: "https://UpSkillingStudio.github.io"
+domain: upskilllabs.github.io
+url: "https://upskilllabs.github.io"
   # the base hostname & protocol for your site, e.g. http://example.com
 baseurl: "flashcards" # the subpath of your site, e.g. /blog
-github_username:  UpSkillingStudio
+github_username:  upskilllabs
 
 # Build settings
 theme: minima
