@@ -138,21 +138,21 @@ function showCard() {
   const c = deck[current];
   const card = document.getElementById('card');
 
-  // Reset flip instantly
   card.style.transition = 'none';
   card.classList.remove('flipped');
   flipped = false;
-  void card.offsetWidth; // force reflow
-  card.style.transition = ''; // restore
+  void card.offsetWidth;
+  card.style.transition = '';
+  document.querySelectorAll('.card-body').forEach(el => el.scrollTop = 0);
 
   const tc = TYPE_CONFIG[c.type] || { cls: 'type-def', label: c.type || '' };
-  document.getElementById('topicTag').textContent    = c.topic || '';
-  document.getElementById('topicTagB').textContent   = c.topic || '';
-  document.getElementById('typeTag').className       = 'tag ' + tc.cls;
-  document.getElementById('typeTag').textContent     = tc.label;
+  document.getElementById('topicTag').textContent     = c.topic || '';
+  document.getElementById('topicTagB').textContent    = c.topic || '';
+  document.getElementById('typeTag').className        = 'tag ' + tc.cls;
+  document.getElementById('typeTag').textContent      = tc.label;
   document.getElementById('questionText').textContent = c.front;
-  document.getElementById('answerText').innerHTML    = c.back;
-  document.getElementById('cardNum').textContent     = (current + 1) + ' / ' + deck.length;
+  document.getElementById('answerText').innerHTML     = c.back;
+  document.getElementById('cardNum').textContent      = (current + 1) + ' / ' + deck.length;
 }
 
 function flipCard() {
