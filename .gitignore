@@ -233,3 +233,12 @@ deploy_*
 ########################################
 !.gitignore
 !.env.example
+
+########################################
+# JeKyll (GitHub Pages)
+########################################
+_site
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+vendor
