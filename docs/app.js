@@ -136,17 +136,23 @@ function reviewUnsure() {
 function showCard() {
   if (current >= deck.length) { showComplete(); return; }
   const c = deck[current];
+  const card = document.getElementById('card');
+
+  // Reset flip instantly
+  card.style.transition = 'none';
+  card.classList.remove('flipped');
   flipped = false;
-  document.getElementById('card').classList.remove('flipped');
+  void card.offsetWidth; // force reflow
+  card.style.transition = ''; // restore
 
   const tc = TYPE_CONFIG[c.type] || { cls: 'type-def', label: c.type || '' };
-  document.getElementById('topicTag').textContent   = c.topic || '';
-  document.getElementById('topicTagB').textContent  = c.topic || '';
-  document.getElementById('typeTag').className      = 'tag ' + tc.cls;
-  document.getElementById('typeTag').textContent    = tc.label;
+  document.getElementById('topicTag').textContent    = c.topic || '';
+  document.getElementById('topicTagB').textContent   = c.topic || '';
+  document.getElementById('typeTag').className       = 'tag ' + tc.cls;
+  document.getElementById('typeTag').textContent     = tc.label;
   document.getElementById('questionText').textContent = c.front;
-  document.getElementById('answerText').innerHTML   = c.back;
-  document.getElementById('cardNum').textContent    = (current + 1) + ' / ' + deck.length;
+  document.getElementById('answerText').innerHTML    = c.back;
+  document.getElementById('cardNum').textContent     = (current + 1) + ' / ' + deck.length;
 }
 
 function flipCard() {
@@ -246,10 +252,11 @@ function initSwipe() {
   let startX = 0, startY = 0, dragging = false;
 
   stage.addEventListener('touchstart', e => {
+    if (e.target.closest('.card-body')) return; // already there or add it
+    dragging = true;
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
-    dragging = true;
-  }, { passive: true });
+  });
 
   stage.addEventListener('touchmove', e => {
   if (!dragging) return;
@@ -271,7 +278,7 @@ function initSwipe() {
 }, { passive: true });
 
   stage.addEventListener('touchend', e => {
-    if (!dragging) return;
+  if (!dragging) return; // ← ADD: bail if we never started a drag
     dragging = false;
     const dx = e.changedTouches[0].clientX - startX;
     const dy = e.changedTouches[0].clientY - startY;
