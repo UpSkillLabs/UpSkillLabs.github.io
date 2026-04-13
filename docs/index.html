@@ -1,141 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flashcards</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e8eaf0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 24px 16px; }
-  h1 { font-size: 1.3rem; font-weight: 700; color: #7c9fff; margin-bottom: 4px; letter-spacing: 0.04em; }
-  .subtitle { font-size: 0.78rem; color: #6b7280; margin-bottom: 20px; }
-  .filter-bar { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: 860px; margin-bottom: 20px; }
-  .filter-btn { padding: 5px 11px; border-radius: 20px; border: 1px solid #2d3142; background: #181c2a; color: #9ca3af; font-size: 0.72rem; cursor: pointer; transition: all 0.2s; }
-  .filter-btn:hover { border-color: #7c9fff; color: #7c9fff; }
-  .filter-btn.active { background: #7c9fff; color: #0f1117; border-color: #7c9fff; font-weight: 700; }
-  .stats-bar { display: flex; gap: 18px; margin-bottom: 20px; font-size: 0.78rem; }
-  .stat { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-  .stat-num { font-size: 1.3rem; font-weight: 700; }
-  .stat-label { color: #6b7280; }
-  .stat-num.green { color: #4ade80; }
-  .stat-num.red { color: #f87171; }
-  .stat-num.blue { color: #7c9fff; }
-  .progress-wrap { width: 100%; max-width: 560px; background: #1e2235; border-radius: 8px; height: 6px; margin-bottom: 22px; overflow: hidden; }
-  .progress-fill { height: 100%; background: linear-gradient(90deg, #7c9fff, #a78bfa); border-radius: 8px; transition: width 0.4s ease; }
-  .card-container { perspective: 1400px; width: 100%; max-width: 560px; height: 280px; margin-bottom: 24px; cursor: pointer; }
-  .card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.55s cubic-bezier(0.4,0,0.2,1); }
-  .card.flipped { transform: rotateY(180deg); }
-  .card-face { position: absolute; inset: 0; border-radius: 16px; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 28px 32px; text-align: center; }
-  .card-front { background: linear-gradient(135deg, #1e2235 0%, #252840 100%); border: 1px solid #2d3655; }
-  .card-back { background: linear-gradient(135deg, #14202e 0%, #1a2a3a 100%); border: 1px solid #1e4070; transform: rotateY(180deg); }
-  .card-topic-tag { position: absolute; top: 14px; left: 16px; font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #7c9fff22; color: #7c9fff; letter-spacing: 0.06em; text-transform: uppercase; }
-  .card-type-tag { position: absolute; top: 14px; right: 16px; font-size: 0.63rem; font-weight: 600; padding: 2px 8px; border-radius: 10px; letter-spacing: 0.05em; text-transform: uppercase; }
-  .type-def { background: #a78bfa22; color: #a78bfa; }
-  .type-concept { background: #34d39922; color: #34d399; }
-  .type-scenario { background: #fbbf2422; color: #fbbf24; }
-  .type-compare { background: #f8717122; color: #f87171; }
-  .type-exam { background: #7c9fff22; color: #7c9fff; }
-  .card-num { position: absolute; bottom: 12px; right: 16px; font-size: 0.65rem; color: #3d4466; }
-  .card-hint { position: absolute; bottom: 12px; left: 16px; font-size: 0.63rem; color: #3d4466; }
-  .card-front .question { font-size: 1.05rem; font-weight: 600; line-height: 1.55; color: #e8eaf0; }
-  .card-back .answer { font-size: 0.9rem; line-height: 1.65; color: #cbd5e1; }
-  .card-back .answer strong { color: #7c9fff; font-weight: 700; }
-  .card-back .answer .highlight { color: #4ade80; font-weight: 600; }
-  .controls { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
-  .btn { padding: 10px 22px; border-radius: 10px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em; }
-  .btn:hover { transform: translateY(-1px); }
-  .btn:active { transform: translateY(0); }
-  .btn-know { background: #16a34a; color: #fff; }
-  .btn-know:hover { background: #15803d; }
-  .btn-unsure { background: #b45309; color: #fff; }
-  .btn-unsure:hover { background: #92400e; }
-  .btn-flip { background: #2d3655; color: #7c9fff; border: 1px solid #3d4a7a; }
-  .btn-flip:hover { background: #3d4a7a; }
-  .btn-restart { background: #1e2235; color: #9ca3af; border: 1px solid #2d3142; font-size: 0.78rem; padding: 8px 16px; }
-  .mode-bar { display: flex; gap: 8px; margin-bottom: 18px; }
-  .mode-btn { padding: 6px 14px; border-radius: 8px; border: 1px solid #2d3142; background: #181c2a; color: #9ca3af; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
-  .mode-btn.active { background: #a78bfa22; color: #a78bfa; border-color: #a78bfa; font-weight: 700; }
-  .complete-screen { display: none; flex-direction: column; align-items: center; gap: 16px; text-align: center; max-width: 500px; }
-  .complete-screen.visible { display: flex; }
-  .complete-title { font-size: 1.6rem; font-weight: 700; color: #4ade80; }
-  .complete-sub { color: #9ca3af; font-size: 0.88rem; line-height: 1.6; }
-  .score-circle { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #7c9fff, #a78bfa); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .score-pct { font-size: 1.5rem; font-weight: 800; color: #fff; }
-  .score-label { font-size: 0.65rem; color: #ffffffaa; }
-  .kb-hint { font-size: 0.68rem; color: #3d4466; margin-top: -10px; margin-bottom: 16px; }
-  kbd { background: #1e2235; border: 1px solid #2d3655; border-radius: 4px; padding: 1px 5px; font-size: 0.65rem; color: #6b7280; }
-  #loading { color: #6b7280; font-size: 0.9rem; margin-top: 40px; }
-</style>
+    <meta charset="UTF-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+    <title>Flashcards</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"/>
+    <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
 
-<div id="loading">Loading deck...</div>
-
-<h1 id="appTitle" style="display:none"></h1>
-<p class="subtitle" id="appSubtitle"></p>
-
-<div class="mode-bar" id="modeBar" style="display:none">
-  <button class="mode-btn active" onclick="setMode('all')" id="mode-all">All Cards</button>
-  <button class="mode-btn" onclick="setMode('unsure')" id="mode-unsure">Unsure Only</button>
-  <button class="mode-btn" onclick="setMode('shuffle')" id="mode-shuffle">Shuffled</button>
+<div id="loading" class="loading-screen">
+    <div class="spinner"></div>
+    <span>Loading deck…</span>
 </div>
 
-<div class="filter-bar" id="filterBar"></div>
+<div class="app-shell">
 
-<div class="stats-bar" id="statsBar" style="display:none">
-  <div class="stat"><span class="stat-num blue" id="statTotal">0</span><span class="stat-label">Total</span></div>
-  <div class="stat"><span class="stat-num green" id="statKnow">0</span><span class="stat-label">Know</span></div>
-  <div class="stat"><span class="stat-num red" id="statUnsure">0</span><span class="stat-label">Unsure</span></div>
-  <div class="stat"><span class="stat-num" id="statLeft" style="color:#fbbf24">0</span><span class="stat-label">Left</span></div>
-</div>
+    <header class="top-bar">
+        <div class="top-meta">
+            <h1 id="appTitle" style="display:none"></h1>
+            <p id="appSubtitle" class="subtitle"></p>
+        </div>
+        <div class="stats-bar" id="statsBar" style="display:none">
+        <span class="stat">
+          <span class="stat-num green" id="statKnow">0</span>
+          <span class="stat-lbl">Know</span>
+        </span>
+            <span class="stat-divider"></span>
+            <span class="stat">
+          <span class="stat-num red" id="statUnsure">0</span>
+          <span class="stat-lbl">Unsure</span>
+        </span>
+            <span class="stat-divider"></span>
+            <span class="stat">
+          <span class="stat-num amber" id="statLeft">0</span>
+          <span class="stat-lbl">Left</span>
+        </span>
+            <span class="stat-divider"></span>
+            <span class="stat">
+          <span class="stat-num muted" id="statTotal">0</span>
+          <span class="stat-lbl">Total</span>
+        </span>
+        </div>
+    </header>
 
-<div class="progress-wrap" id="progressWrap" style="display:none">
-  <div class="progress-fill" id="progressFill" style="width:0%"></div>
-</div>
-
-<div class="card-container" id="cardContainer" onclick="flipCard()" style="display:none">
-  <div class="card" id="card">
-    <div class="card-face card-front">
-      <div class="card-topic-tag" id="topicTag"></div>
-      <div class="card-type-tag" id="typeTag"></div>
-      <div class="question" id="questionText"></div>
-      <div class="card-hint">tap to reveal</div>
-      <div class="card-num" id="cardNum"></div>
+    <div class="progress-track" id="progressWrap" style="display:none">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
     </div>
-    <div class="card-face card-back">
-      <div class="card-topic-tag" id="topicTagB"></div>
-      <div class="answer" id="answerText"></div>
-      <div class="card-hint">← swipe or use buttons</div>
+
+    <div class="mode-bar" id="modeBar" style="display:none">
+        <button class="mode-btn active" onclick="setMode('all')" id="mode-all">
+            All
+        </button>
+        <button class="mode-btn" onclick="setMode('unsure')" id="mode-unsure">
+            Unsure
+        </button>
+        <button class="mode-btn" onclick="setMode('shuffle')" id="mode-shuffle">
+            Shuffle
+        </button>
     </div>
-  </div>
-</div>
 
-<div class="controls" id="controls1" style="display:none">
-  <button class="btn btn-flip" onclick="flipCard()">Flip Card</button>
-  <button class="btn btn-know" onclick="markCard(true)">✓ Know It</button>
-  <button class="btn btn-unsure" onclick="markCard(false)">✗ Unsure</button>
-</div>
-<div class="kb-hint" id="kbHint" style="display:none"><kbd>Space</kbd> flip · <kbd>→</kbd> know · <kbd>←</kbd> unsure</div>
+    <div class="filter-scroll" id="filterBar"></div>
 
-<div class="controls" id="controls2" style="display:none">
-  <button class="btn btn-restart" onclick="restart()">↺ Restart Deck</button>
-  <button class="btn btn-restart" onclick="restartAll()">↺ Reset All</button>
-</div>
+    <div class="stage" id="cardContainer" style="display:none">
+        <div class="swipe-hint swipe-left" id="swipeLeft">✕</div>
+        <div class="swipe-hint swipe-right" id="swipeRight">✓</div>
+        <div class="card" id="card">
+            <div class="card-face card-front">
+                <div class="face-tags">
+                    <span class="tag tag-topic" id="topicTag"></span>
+                    <span class="tag" id="typeTag"></span>
+                </div>
+                <div class="card-body">
+                    <p class="question" id="questionText"></p>
+                </div>
+                <div class="face-foot">
+                    <span class="tap-hint">tap to reveal</span>
+                    <span class="card-num" id="cardNum"></span>
+                </div>
+            </div>
+            <div class="card-face card-back">
+                <div class="face-tags">
+                    <span class="tag tag-topic" id="topicTagB"></span>
+                </div>
+                <div class="card-body">
+                    <p class="answer" id="answerText"></p>
+                </div>
+                <div class="face-foot">
+                    <span class="tap-hint">swipe or use buttons</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="complete-screen" id="completeScreen">
-  <div class="complete-title">🎉 Deck Complete!</div>
-  <div class="score-circle">
-    <span class="score-pct" id="scorePct">0%</span>
-    <span class="score-label">KNOWN</span>
-  </div>
-  <div class="complete-sub" id="completeSub"></div>
-  <button class="btn btn-flip" onclick="restart()" style="margin-top:8px">Review Again</button>
-  <button class="btn btn-unsure" onclick="reviewUnsure()" style="margin-top:4px">Review Unsure Only</button>
-</div>
+    <nav class="action-bar" id="controls1" style="display:none">
+        <button class="action-btn btn-unsure" onclick="markCard(false)">
+            <span class="action-icon">✕</span>
+            <span class="action-lbl">Unsure</span>
+        </button>
+        <button class="action-btn btn-flip" onclick="flipCard()">
+            <span class="action-icon">↺</span>
+            <span class="action-lbl">Flip</span>
+        </button>
+        <button class="action-btn btn-know" onclick="markCard(true)">
+            <span class="action-icon">✓</span>
+            <span class="action-lbl">Know</span>
+        </button>
+    </nav>
 
-<!-- Step 1: load config -->
+    <div class="kb-hint" id="kbHint" style="display:none">
+<!--        <kbd>Space</kbd> flip · <kbd>→</kbd> know · <kbd>←</kbd> unsure-->
+    </div>
+
+    <div class="restart-bar" id="controls2">
+        <button class="ghost-btn" onclick="restart()">↺ Restart</button>
+        <button class="ghost-btn" onclick="restartAll()">⟳ Reset All</button>
+    </div>
+
+    <div class="complete-screen" id="completeScreen">
+        <div class="complete-card">
+            <div class="complete-emoji">🎉</div>
+            <h2 class="complete-title">Deck Complete</h2>
+            <div class="score-ring">
+                <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%"
+                                        y2="0%">
+                            <stop offset="0%" stop-color="#7c9fff"/>
+                            <stop offset="100%" stop-color="#a78bfa"/>
+                        </linearGradient>
+                    </defs>
+                    <circle cx="40" cy="40" r="34" class="ring-bg"/>
+                    <circle cx="40" cy="40" r="34" class="ring-fill"
+                            id="ringFill"/>
+                </svg>
+                <div class="score-inner">
+                    <span class="score-pct" id="scorePct">0%</span>
+                    <span class="score-sub">known</span>
+                </div>
+            </div>
+            <p class="complete-sub" id="completeSub"></p>
+            <div class="complete-actions">
+                <button class="pill-btn pill-primary" onclick="restart()">Review
+                    Again
+                </button>
+                <button class="pill-btn pill-secondary"
+                        onclick="reviewUnsure()">Unsure Only
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /app-shell -->
+
 <script src="config.js"></script>
 <script src="app.js"></script>
-
 </body>
 </html>
