@@ -252,21 +252,23 @@ function initSwipe() {
   }, { passive: true });
 
   stage.addEventListener('touchmove', e => {
-    if (!dragging) return;
-    const dx = e.touches[0].clientX - startX;
-    const dy = e.touches[0].clientY - startY;
-    if (Math.abs(dx) > Math.abs(dy) + 8) {
-      const card = document.getElementById('card');
-      const rot  = Math.min(Math.max(dx * 0.07, -10), 10);
-      const base = flipped ? 'rotateY(180deg)' : '';
-      card.style.transition = 'none';
-      card.style.transform  = `${base} rotate(${rot}deg) translateX(${dx * 0.25}px)`;
-      document.getElementById('swipeLeft').style.opacity  =
-        dx < -30 ? Math.min((-dx - 30) / 80, 1) : 0;
-      document.getElementById('swipeRight').style.opacity =
-        dx >  30 ? Math.min((dx  - 30) / 80, 1) : 0;
-    }
-  }, { passive: true });
+  if (!dragging) return;
+  if (e.target.closest('.card-body')) return; // ← ADD THIS
+
+  const dx = e.touches[0].clientX - startX;
+  const dy = e.touches[0].clientY - startY;
+  if (Math.abs(dx) > Math.abs(dy) + 8) {
+    const card = document.getElementById('card');
+    const rot  = Math.min(Math.max(dx * 0.07, -10), 10);
+    const base = flipped ? 'rotateY(180deg)' : '';
+    card.style.transition = 'none';
+    card.style.transform  = `${base} rotate(${rot}deg) translateX(${dx * 0.25}px)`;
+    document.getElementById('swipeLeft').style.opacity  =
+      dx < -30 ? Math.min((-dx - 30) / 80, 1) : 0;
+    document.getElementById('swipeRight').style.opacity =
+      dx >  30 ? Math.min((dx  - 30) / 80, 1) : 0;
+  }
+}, { passive: true });
 
   stage.addEventListener('touchend', e => {
     if (!dragging) return;

@@ -327,7 +327,9 @@ h1 {
   padding: 12px 20px;
   text-align: center;
   overflow-y: auto;
-  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch; /* keep this */
+  overscroll-behavior: contain;      /* ADD: prevents scroll bubbling */
+  touch-action: pan-y;               /* ADD: tells iOS this element scrolls vertically */
 }
 .card-body::-webkit-scrollbar { display: none; }
 .face-foot {
